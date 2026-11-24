@@ -55,6 +55,17 @@ LINE = "On vacation. Please answer your own email with the reply you were hoping
 
 
 def main() -> int:
+    # Gate self-check (mirrors the sealed scorer): 1-160 chars, ASCII,
+    # one line, not only whitespace. Fail loudly rather than write a
+    # line the gate would refuse.
+    if not 1 <= len(LINE) <= 160:
+        raise SystemExit(f"LINE is {len(LINE)} chars, gate allows 1-160")
+    if not LINE.isascii():
+        raise SystemExit("LINE must be ASCII")
+    if "\n" in LINE or "\r" in LINE:
+        raise SystemExit("LINE must be a single line")
+    if not LINE.strip():
+        raise SystemExit("LINE must not be only whitespace")
     out_dir = os.environ.get("OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
